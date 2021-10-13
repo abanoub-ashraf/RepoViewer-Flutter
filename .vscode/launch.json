@@ -1,0 +1,67 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "macOS",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d",
+                "macos"
+            ]
+        },
+        {
+            "name": "Web",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d",
+                "chrome"
+            ]
+        },
+        {
+            "name": "Android",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d",
+                "CPH1933"
+            ]
+        },
+        {
+            "name": "iOS",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d",
+                "iPhone 12 Pro Max"
+            ]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "All Devices",
+            "configurations": [
+                "macOS",
+                "Web",
+                "Android",
+                "iOS"
+            ]
+        },
+        {
+            "name": "Mobile Devices",
+            "configurations": [
+                "Android",
+                "iOS"
+            ]
+        }
+    ]
+}
