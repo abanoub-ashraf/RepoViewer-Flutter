@@ -1,6 +1,6 @@
 import 'package:logger/logger.dart';
 
-var logger = Logger(
+Logger logger = Logger(
     ///
     /// Use the default LogFilter (-> only log in debug mode)
     ///
@@ -40,6 +40,6 @@ var logger = Logger(
         ///
         /// to hide the box around the message
         ///
-        noBoxingByDefault: true
+        noBoxingByDefault: true,
     ),
 );
