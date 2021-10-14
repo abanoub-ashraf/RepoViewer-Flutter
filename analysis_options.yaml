@@ -13,3 +13,6 @@ analyzer:
     prefer_single_quotes: true
     eol_at_end_of_file: ignore
     avoid_redundant_argument_values: ignore
+    require_trailing_commas: ignore
+    avoid_classes_with_only_static_members: ignore
+    depend_on_referenced_packages: ignore
