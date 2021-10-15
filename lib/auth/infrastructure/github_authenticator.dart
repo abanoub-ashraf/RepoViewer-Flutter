@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +6,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:print_color/print_color.dart';
 import 'package:repo_viewer/auth/domain/auth_failure.dart';
 import 'package:repo_viewer/auth/infrastructure/credentials_storage/credentials_storage.dart';
+import 'package:repo_viewer/core/infrastructure/dio_extensions.dart';
 import 'package:repo_viewer/core/shared/encoders.dart';
 import 'package:repo_viewer/utils/app_constants.dart';
 import 'package:repo_viewer/utils/config.dart';
@@ -238,10 +237,12 @@ class GithubAuthenticator {
                 );
             } on DioError catch(exception) {
                 ///
-                /// the socket exception in dio should be caught this way, not just typing
-                /// on SocketException inside the catch block
+                /// - the socket exception in dio should be caught this way, not just typing
+                ///   on SocketException inside the catch block
+                /// 
+                /// - the isNoConnectionError coming from dio extensions file we created
                 ///
-                if (exception.type == DioErrorType.other && exception.error is SocketException) {
+                if (exception.isNoConnectionError) {
                     Print.red('===============================================');
                     Print.red('Token is not Revoked!');
                     Print.red('===============================================');
