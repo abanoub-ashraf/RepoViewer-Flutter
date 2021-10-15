@@ -60,9 +60,31 @@ class GithubAuthenticator {
             ///
             final storedCredentials = await _credentialsStorage.read();
 
+            ///
+            /// if the stored credentials is not null, check if they expired or not
+            ///
             if (storedCredentials != null) {
+                ///
+                /// if they are expired and can be refreshed, then refresh them
+                ///
                 if (storedCredentials.canRefresh && storedCredentials.isExpired) {
-                    /// TODO: refresh
+                    final failureOrCredentials = await refresh(storedCredentials);
+
+                    ///
+                    /// - our refresh() function returns either type so we need to check
+                    ///   the both sides that one of them might be returned 
+                    /// 
+                    /// - if the left side was returned which is the auth failure then return null
+                    ///   and do nothing, if the right side was returned then return that side
+                    ///   which is the new refreshed credentials
+                    /// 
+                    /// - if the right side was returned that return that side which is the new token
+                    ///   cause that's what is this function doing
+                    ///
+                    return failureOrCredentials.fold(
+                        (l) => null, 
+                        (r) => r
+                    );
                 }           
             }
             
@@ -256,6 +278,44 @@ class GithubAuthenticator {
             return right(unit);
         } on PlatformException {
             return left(const AuthFailure.storage());
+        }
+    }
+
+    ///
+    /// - this method will refresh the old expired token that we have, so it needs 
+    ///   that old token as a parameter
+    /// 
+    /// - this method will throw a state error if the credentials can't be refreshed
+    ///   but we don't need to catch that exception cause we will call this method only
+    ///   in the case that the credentials can be refreshed
+    /// 
+    /// - this method wil return the new refreshed credentials access token
+    ///   and we need to save them in the credentials storage cause that storage
+    ///   should contain the latest credentials access token
+    ///
+    Future<Either<AuthFailure, Credentials>> refresh(Credentials credentials) async {
+        try {
+            final refreshedCredentials = await credentials.refresh(
+                identifier: Config.clientID,
+                secret: Config.clientSecret,
+                httpClient: GithubOAuthHttpClient()
+            );
+
+            await _credentialsStorage.save(refreshedCredentials);
+
+            return right(refreshedCredentials);
+        } on FormatException {
+            return left(
+                const AuthFailure.server()
+            );
+        } on AuthorizationException catch (exception) {
+            return left(
+                AuthFailure.server('${exception.error}: ${exception.description}')
+            );
+        } on PlatformException {
+            return left(
+                const AuthFailure.storage()
+            );
         }
     }
 }
