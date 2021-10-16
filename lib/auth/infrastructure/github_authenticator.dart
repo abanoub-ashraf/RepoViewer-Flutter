@@ -44,7 +44,6 @@ class GithubAuthenticator {
     /// an instance of the CredentialsStorage interface
     ///
     final CredentialsStorage _credentialsStorage;
-
     final Dio _dio;
 
     GithubAuthenticator(this._credentialsStorage, this._dio);
@@ -123,7 +122,21 @@ class GithubAuthenticator {
     }
 
     ///
+    /// - this is the first function that bring the authorization url that will give us a code 
+    ///   that will be exchanged for access token in the next step
+    ///   ((----- this part is in the 83th video in the course -----))
     /// 
+    /// - this is the url that we will show to the user in a web view and it will give us a code
+    ///   after the user type their username and password
+    /// 
+    /// - so this is the authorization url that's gonna load inside the web view
+    ///   that will ask the user for their username and password,
+    ///   then after the user type their data, we will get redirected to 
+    ///   the redirect uri with the code that will be exchanged for token attached to it
+    /// 
+    /// - that code in the redirect uri will be passed to 
+    ///   the handleAuthorizationResponse() function underneath it
+    ///   and in there the oauth2 package will do the rest of the work
     ///
     Uri getAuthorizationUrl(AuthorizationCodeGrant grant) {
         return grant.getAuthorizationUrl(
@@ -133,6 +146,9 @@ class GithubAuthenticator {
     }
 
     ///
+    /// - this is the second function that will take the code from the redirect url
+    ///   we redirected to by the webview and then exchange it into an access token
+    /// 
     /// - handle the response of the authorization 
     ///   by return Unit which means nothing, if the auth is successfully
     ///   or return AuthFailure, if the authorization has failed
