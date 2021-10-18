@@ -11,4 +11,6 @@ class AppConstants {
     static final revocationEndpoint     = Uri.parse('$apiUrl/applications/${Config.clientID}/token');
     static final redirectUrl            = Uri.parse('http://localhost:3000/callback');
     static const scopes                 = ['read:user', 'repo']; 
+
+    static const appName                = 'Repo Viewer';
 }
