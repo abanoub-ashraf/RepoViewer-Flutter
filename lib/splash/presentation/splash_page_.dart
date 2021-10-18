@@ -14,7 +14,13 @@ class SplashPage extends StatelessWidget {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                        Icon(MdiIcons.github, size: 150),
+                        ///
+                        /// MdiIcons comes from material design icons flutter package
+                        ///
+                        Icon(
+                            MdiIcons.github, 
+                            size: 150
+                        ),
                         SizedBox(height: 16),
                         LinearProgressIndicator()
                     ],
