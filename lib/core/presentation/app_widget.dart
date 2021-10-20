@@ -22,6 +22,12 @@ final initializationProvider = FutureProvider<Unit>((ref) async {
     ///
     final authNotifier = ref.read(authNotifierProvider.notifier);
     
+    ///
+    /// checkAndUpdateAuthStatus() needs to run once to set the state
+    /// inside the auth notifier to authenticated or not, that's why we need this 
+    /// initialization provider to run once without doing anything with its value
+    /// and that happens inside the root provider listener inside the build method
+    ///
     await authNotifier.checkAndUpdateAuthStatus();
 
     return unit;
@@ -53,11 +59,17 @@ class AppWidget extends StatelessWidget {
                 ///
                 /// this provider listener will listen to the auth notifier provider
                 /// to check do something based on each state we got from the AuthState
+                /// after the state was set because of the initialization provider above
                 ///
                 provider: authNotifierProvider,
-                onChange: (context, state) {
-                    state.maybeMap(
-                        orElse: () {},
+                ///
+                /// the initialization provider did set this authState and now 
+                /// we wanna do something with it after it is set
+                /// 
+                /// if we're authenticated
+                ///
+                onChange: (context, authState) {
+                    authState.maybeMap(
                         authenticated: (_) {
                             appRouter.pushAndPopUntil(
                                 const StarredReposRoute(), 
@@ -69,7 +81,8 @@ class AppWidget extends StatelessWidget {
                                 const SignInRoute(), 
                                 predicate: (route) => false
                             );
-                        }
+                        },
+                        orElse: () {},
                     );
                 },
                 child: MaterialApp.router(

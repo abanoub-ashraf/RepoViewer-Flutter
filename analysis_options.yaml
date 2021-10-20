@@ -17,3 +17,4 @@ analyzer:
     avoid_classes_with_only_static_members: ignore
     depend_on_referenced_packages: ignore
     directives_ordering: ignore
+    sort_child_properties_last: ignore

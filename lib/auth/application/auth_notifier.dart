@@ -17,6 +17,10 @@ class AuthState with _$AuthState {
 }
 
 class AuthNotifier extends StateNotifier<AuthState> {
+    ///
+    /// this auth notifier [application layer] will use the functions of the authenticator
+    /// [infrastructure layer]
+    ///
     final GithubAuthenticator _authenticator;
 
     AuthNotifier(this._authenticator) : super(const AuthState.initial());
