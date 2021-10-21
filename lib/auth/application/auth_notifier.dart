@@ -5,7 +5,7 @@ import 'package:repo_viewer/auth/infrastructure/github_authenticator.dart';
 
 part 'auth_notifier.freezed.dart';
 
-typedef AuthUriCallback = Future<Uri> Function(Uri authorizationUrl);
+// typedef AuthUriCallback = Future<Uri> Function(Uri authorizationUrl);
 
 @freezed
 class AuthState with _$AuthState {
@@ -52,7 +52,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     ///   give us a code in the redirect url which gonna be the output of the authorizationCallback 
     ///   function that was passed to this signIn() function as a parameter
     ///
-    Future<void> signIn(AuthUriCallback authorizationCallback) async {
+    Future<void> signIn(Future<Uri> Function(Uri authorizationUrl) authorizationCallback) async {
         ///
         /// 1- create the grant
         ///

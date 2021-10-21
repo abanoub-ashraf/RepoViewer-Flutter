@@ -1,14 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:repo_viewer/auth/shared/providers.dart';
+import 'package:repo_viewer/core/presentation/routes/app_router.gr.dart';
 
 ///
 /// this [presentation layer] will use the functions of the [application layer]
 ///
-class SignInPage extends StatelessWidget {
+class SignInPage extends ConsumerWidget {
     const SignInPage({ Key? key }) : super(key: key);
 
     @override
-    Widget build(BuildContext context) {
+    Widget build(BuildContext context, ScopedReader watch) {
         return Scaffold(
             body: SafeArea(
                 child: Center(
@@ -54,15 +60,60 @@ class SignInPage extends StatelessWidget {
                                             backgroundColor: MaterialStateProperty.all(Colors.green),
                                         ),
                                         onPressed: () {
-                                            /// TODO: display a web view
+                                            context.read(authNotifierProvider.notifier).signIn(
+                                                ///
+                                                /// this authorizationUrl is what i passed to the function
+                                                /// which's a parameter inside the signIn()
+                                                ///
+                                                (authorizationUrl) {
+                                                    ///
+                                                    /// - the completer will return us a uri
+                                                    /// 
+                                                    /// - we gonna need this cause the onAuthorizationCodeRedirectAttempt
+                                                    ///   method will return us the redirected url uri but 
+                                                    ///   synchronously and that logically that function will happen 
+                                                    ///   in the future when the web view redirect to that url
+                                                    ///   so we need that redirected url uri to be in a future form
+                                                    ///   and that's what completer does for us
+                                                    ///
+                                                    final completer = Completer<Uri>();
+
+                                                    AutoRouter.of(context).push(
+                                                        AuthorizationRoute(
+                                                            ///
+                                                            /// - we will send the authorizationUrl to this
+                                                            ///   AuthorizationRoute to display that url
+                                                            ///   inside its web view
+                                                            /// 
+                                                            /// - that web view will return a redirect url
+                                                            ///   which we will take from the 
+                                                            ///   onAuthorizationCodeRedirectAttempt function
+                                                            /// 
+                                                            /// - that redirect url will be returned to the 
+                                                            ///   signIn() function using the completer
+                                                            authorizationUrl: authorizationUrl,
+                                                            onAuthorizationCodeRedirectAttempt: (redirectUrl) {
+                                                                ///
+                                                                /// signIn() returns a redirect uri in a future
+                                                                /// so we need to return this redirect url into
+                                                                /// a future and completer does that for us
+                                                                ///
+                                                                completer.complete(redirectUrl);
+                                                            }
+                                                        )
+                                                    );
+
+                                                    return completer.future;
+                                                }
+                                            );
                                         },
-                                    )
+                                    ),
                                 ],
                             ),
                         ),
                     ),
                 ),
-            )
+            ),
         );
     }
 }
