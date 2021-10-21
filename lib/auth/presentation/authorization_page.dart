@@ -1,7 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:repo_viewer/utils/app_constants.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:repo_viewer/utils/app_constants.dart';
 
+///
+/// this is the page that will hold the web view that's gonna load once 
+/// the sign in button from the sign in page is pressed 
+///
 class AuthorizationPage extends StatefulWidget {
     ///
     /// this url will be shown in the web view
@@ -25,6 +30,18 @@ class AuthorizationPage extends StatefulWidget {
 }
 
 class _AuthorizationPageState extends State<AuthorizationPage> {
+    ///
+    /// to fix not so important issue in the web view with android
+    ///
+    @override
+    void initState() {
+        super.initState();
+
+        if (Platform.isAndroid) {
+            WebView.platform = SurfaceAndroidWebView();
+        }
+    }
+
     @override
     Widget build(BuildContext context) {
         return Scaffold(
