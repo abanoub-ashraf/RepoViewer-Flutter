@@ -60,6 +60,12 @@ class SignInPage extends ConsumerWidget {
                                             backgroundColor: MaterialStateProperty.all(Colors.green),
                                         ),
                                         onPressed: () {
+                                            ///
+                                            /// this signIn() method will return the redirect url that 
+                                            /// contains the code that will be exchanged for token
+                                            /// and that redirect url will be used inside 
+                                            /// this signIn() method itself
+                                            ///
                                             context.read(authNotifierProvider.notifier).signIn(
                                                 ///
                                                 /// this authorizationUrl is what i passed to the function
@@ -92,6 +98,10 @@ class SignInPage extends ConsumerWidget {
                                                             /// - that redirect url will be returned to the 
                                                             ///   signIn() function using the completer
                                                             authorizationUrl: authorizationUrl,
+                                                            ///
+                                                            /// we will get this redirect url from inside
+                                                            /// the Authorization page throw this constructor 
+                                                            ///
                                                             onAuthorizationCodeRedirectAttempt: (redirectUrl) {
                                                                 ///
                                                                 /// signIn() returns a redirect uri in a future
@@ -103,6 +113,10 @@ class SignInPage extends ConsumerWidget {
                                                         )
                                                     );
 
+                                                    ///
+                                                    /// this is the redirect url that this signIn()
+                                                    /// will return, to be used inside the signIn() itself
+                                                    ///
                                                     return completer.future;
                                                 }
                                             );
