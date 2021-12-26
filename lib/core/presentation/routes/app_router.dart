@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:repo_viewer/auth/presentation/authorization_page.dart';
-import 'package:repo_viewer/auth/presentation/sign_in_page.dart';
-import 'package:repo_viewer/splash/presentation/splash_page_.dart';
-import 'package:repo_viewer/starred_repos/presentation/starred_repos_page.dart';
+
+import '../../../auth/presentation/authorization_page.dart';
+import '../../../auth/presentation/sign_in_page.dart';
+import '../../../splash/presentation/splash_page_.dart';
+import '../../../starred_repos/presentation/starred_repos_page.dart';
 
 ///
 /// - this comes from the auto route package
@@ -22,10 +23,16 @@ import 'package:repo_viewer/starred_repos/presentation/starred_repos_page.dart';
 ///
 @MaterialAutoRouter(
     routes: [
+        ///
+        /// this is the starter page of the app
+        ///
         MaterialRoute(
             page: SplashPage, 
             initial: true
         ),
+        ///
+        /// the path we define in each route here overrides the generated ones
+        ///
         MaterialRoute(
             page: SignInPage, 
             path: '/sign-in'
@@ -36,9 +43,27 @@ import 'package:repo_viewer/starred_repos/presentation/starred_repos_page.dart';
         ),
         MaterialRoute(
             page: StarredReposPage, 
-            path: 'starred'
+            path: '/starred'
         ),
     ], 
+    ///
+    /// replace the 'page' with 'route' in the names of the generated routes
+    ///
     replaceInRouteName: 'Page,Route'
 )
+///
+/// - the auto route generator package is the opposite of freezed package:
+///   the class we define has a dollar sign in the name and the generated one
+///   doesn't have unlike the freezed package
+/// 
+/// - we don't need to define part statement like freezed cause the generated file
+///   doesn't need to be part of this file we defined 
+/// 
+/// to use auto route generator package:
+///     1- it needs the auto route generator dev package
+///     2- we declare the name of this file with a dollar sign
+///     3- annotate the class with MaterialAutoRouter()
+///     4- inside the () put all the routes of the app
+///     5- run the build runner command to generate the code
+///
 class $AppRouter {}

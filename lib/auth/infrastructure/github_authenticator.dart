@@ -1,40 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart';
-import 'package:print_color/print_color.dart';
-import 'package:repo_viewer/auth/domain/auth_failure.dart';
-import 'package:repo_viewer/auth/infrastructure/credentials_storage/credentials_storage.dart';
-import 'package:repo_viewer/core/infrastructure/dio_extensions.dart';
-import 'package:repo_viewer/core/shared/encoders.dart';
-import 'package:repo_viewer/utils/app_constants.dart';
-import 'package:repo_viewer/utils/config.dart';
+import '../../utils/debug_access_token.dart';
 
-///
-/// we need to send the header 'application/json' to the request and 
-/// the handleAuthorizationResponse() function that will do that request takes  
-///
-class GithubOAuthHttpClient extends http.BaseClient {
-    final httpClient = http.Client();
-
-    ///
-    /// this is the function that performs the web request
-    ///
-    @override
-    Future<http.StreamedResponse> send(http.BaseRequest request) {
-        ///
-        /// modify the header of this request so we can get a json response for the access token
-        /// we gonna get from the oauth endpoint
-        ///
-        request.headers['Accept'] = 'application/json';
-        ///
-        /// now we wanna send the modified request object above to the default http client
-        /// like this
-        ///
-        return httpClient.send(request);
-    }
-}
+import '../../core/infrastructure/dio_extensions.dart';
+import '../../core/shared/encoders.dart';
+import '../../utils/app_constants.dart';
+import '../../utils/config.dart';
+import '../domain/auth_failure.dart';
+import 'credentials_storage/credentials_storage.dart';
+import 'github_authenticator_client.dart';
 
 ///
 /// this class will do the authentication
@@ -44,12 +20,16 @@ class GithubAuthenticator {
     /// an instance of the CredentialsStorage interface
     ///
     final CredentialsStorage _credentialsStorage;
+
     final Dio _dio;
 
-    GithubAuthenticator(this._credentialsStorage, this._dio);
+    GithubAuthenticator(
+        this._credentialsStorage, 
+        this._dio
+    );
     
     ///
-    /// store the login credentials on the device
+    /// - get the stored signed in token from the credentials storage
     ///
     Future<Credentials?> getSignedInCredentials() async {
         try {
@@ -97,6 +77,9 @@ class GithubAuthenticator {
     /// check if the user is signed in, by returning true if we got credentials from
     /// the getSignedInCredentials() function
     ///
+    //! this bool will be used from inside the application layer to check and set the state
+    //! wether to be authenticated or not
+    //!
     Future<bool> isSignedIn() => getSignedInCredentials().then(
         (credentials) => credentials != null
     );
@@ -105,6 +88,21 @@ class GithubAuthenticator {
     /// - this is what's gonna make the sign in process
     /// 
     /// - this is gonna be called from the application layer from the state notifier
+    /// 
+    /// - AuthorizationCodeGrant is a class for obtaining credentials via an authorization code grant, 
+    ///   This method of authorization involves sending the resource owner to the authorization server 
+    ///   where they will authorize the client, They're then redirected back to your server, 
+    ///   along with an authorization code, This is used to obtain [Credentials] and create 
+    ///   a fully-authorized [Client].
+    /// 
+    /// - To use this class, you must first call [getAuthorizationUrl] to get the URL to which to 
+    ///   redirect the resource owner, Then once they've been redirected back to your application, 
+    ///   call [handleAuthorizationResponse] or [handleAuthorizationCode] to process 
+    ///   the authorization server's response and construct a [Client].
+    /// 
+    /// - this code grant method will be used from state notifier in the application layer
+    ///   and in there we will pass the return object of this method to a bunch of different methods
+    ///   on of them is get authorization url method
     ///
     AuthorizationCodeGrant createGrant() {
         return AuthorizationCodeGrant(
@@ -117,7 +115,7 @@ class GithubAuthenticator {
             /// in the header so that we get a response in a json format, the response of 
             /// the access token
             ///
-            httpClient: GithubOAuthHttpClient()
+            httpClient: GithubAuthenticatorClient()
         );
     }
 
@@ -138,7 +136,30 @@ class GithubAuthenticator {
     ///   the handleAuthorizationResponse() function underneath it
     ///   and in there the oauth2 package will do the rest of the work
     ///
+    //! this method will give the authorization url that the web view will open
+    //! from inside the presentation layer
+    //!
     Uri getAuthorizationUrl(AuthorizationCodeGrant grant) {
+        ///
+        /// 
+        /// - Returns the URL to which the resource owner should be redirected to 
+        ///   authorize this client.
+        /// 
+        /// - The resource owner will then be redirected to [redirect], which should point to 
+        ///   a server controlled by the client, This redirect will have additional query parameters 
+        ///   that should be passed to [handleAuthorizationResponse].
+        /// 
+        /// - The specific permissions being requested from the authorization server may be specified 
+        ///   via [scopes], The scope strings are specific to the authorization server and may be found 
+        ///   in its documentation. Note that you may not be granted access to every scope you request; 
+        ///   you may check the [Credentials.scopes] field of [Client.credentials] to see which scopes 
+        ///   you were granted.
+        /// 
+        /// - An opaque [state] string may also be passed that will be present in the query parameters 
+        ///   provided to the redirect URL.
+        /// 
+        /// - It is a [StateError] to call this more than once.
+        ///
         return grant.getAuthorizationUrl(
             AppConstants.redirectUrl, 
             scopes: AppConstants.scopes
@@ -158,9 +179,18 @@ class GithubAuthenticator {
     /// - if this function is done with no errors, it will save the token in 
     ///   the credential storage interface so that the class that implements that interface
     ///   can deal with that token
+    /// 
+    /// - the queryParams that this method will take are presented in the redirect url
     ///
+    //! this method will take a grant and a query params from the redirected url (the params contains a code)
+    //! then convert that code into token and save them in the storage credentials
+    //!
     Future<Either<AuthFailure, Unit>> handleAuthorizationResponse(
         AuthorizationCodeGrant grant, 
+        ///
+        //! this query params will come from the redirect url that 
+        //! the web view will redirect us to
+        ///
         Map<String, String> queryParams
     ) async {
         try {
@@ -173,14 +203,28 @@ class GithubAuthenticator {
             ///   that will exchange the code with a token, and for that token to be delivered
             ///   to us in a json format we created a http client sub class and modified its header
             ///   to have application/json so we can get the response in the json format
+            /// 
+            /// - the queryParams contains the authorization code that will be exchanged 
+            ///   into access token by this function grant.handleAuthorizationResponse()
+            ///   we don't need to implement it ourselves
+            /// 
+            /// - this method returns a client and that client has the access token we're
+            ///   interested in
             ///
             final httpClient = await grant.handleAuthorizationResponse(queryParams);
 
+            printAccessToken(httpClient.credentials.accessToken);
+
             ///
-            /// save the token we got from the handleAuthorizationResponse()
-            /// into our credentialStorage
+            /// - save the token we got from the handleAuthorizationResponse()
+            ///   into our credentialStorage
+            /// 
+            /// - httpClient contains the proper access token that we got after the queryParams
+            ///   are exchanged to them
             ///
-            await _credentialsStorage.save(httpClient.credentials);
+            await _credentialsStorage.save(
+                httpClient.credentials
+            );
 
             ///
             /// right() means the right side of the 2 things in the Either keyword
@@ -196,19 +240,25 @@ class GithubAuthenticator {
             ///   which is AuthFailure and we call server() on it cause that exception
             ///   comes from the server
             ///
-            return left(const AuthFailure.server());
+            return left(
+                const AuthFailure.server()
+            );
         } on AuthorizationException catch(exception) {
             ///
             /// this exception also comes from the server as well 
             ///
-            return left(AuthFailure.server('${exception.error}: ${exception.description}'));
+            return left(
+                AuthFailure.server('${exception.error}: ${exception.description}')
+            );
         } on PlatformException {
             ///
             /// - save() also throw this exception so it needs to be handled as well
             /// 
             /// - call the storage() cause this exception comes from the storage not the server
             ///
-            return left(const AuthFailure.storage());
+            return left(
+                const AuthFailure.storage()
+            );
         }
     }
 
@@ -234,10 +284,23 @@ class GithubAuthenticator {
         /// - the client id and the client secret are strings and the base64.encode()
         ///   takes a list of int so we need to change their string format
         ///   into list of int and that's what utf8.encode() method does
+        /// 
+        /// - this is exactly the same as he line beneath it
         ///
         final usernameAndPassword = stringToBase64.encode(
             '${Config.clientID}:${Config.clientSecret}'
         );
+
+        ///
+        /// - the line above this one is the exact same thing as this one
+        /// 
+        /// - stringToBase64 is mix of the 2 encode() methods we used to make this base64
+        ///
+        // final usernameAndPassword = base64.encode(
+        //     utf8.encode(
+        //         '${Config.clientID}:${Config.clientSecret}'
+        //     )
+        // );
 
         ///
         /// - we gonna handle the sign out when the user is offline through
@@ -270,7 +333,7 @@ class GithubAuthenticator {
                     options: Options(
                         headers: {
                             'Authorization': 'basic $usernameAndPassword'
-                        }
+                        },
                     )
                 );
             } on DioError catch(exception) {
@@ -281,9 +344,7 @@ class GithubAuthenticator {
                 /// - the isNoConnectionError coming from dio extensions file we created
                 ///
                 if (exception.isNoConnectionError) {
-                    Print.red('===============================================');
-                    Print.red('Token is not Revoked!');
-                    Print.red('===============================================');
+                    printTokenIsNotRevoked();
                 } else {
                     rethrow;
                 }
@@ -293,7 +354,9 @@ class GithubAuthenticator {
             
             return right(unit);
         } on PlatformException {
-            return left(const AuthFailure.storage());
+            return left(
+                const AuthFailure.storage()
+            );
         }
     }
 
@@ -314,11 +377,14 @@ class GithubAuthenticator {
             final refreshedCredentials = await credentials.refresh(
                 identifier: Config.clientID,
                 secret: Config.clientSecret,
-                httpClient: GithubOAuthHttpClient()
+                httpClient: GithubAuthenticatorClient()
             );
 
+            ///
+            /// save the newly refreshed token in the credentials storage
+            ///
             await _credentialsStorage.save(refreshedCredentials);
-
+            
             return right(refreshedCredentials);
         } on FormatException {
             return left(

@@ -51,7 +51,7 @@ doc/api/
 ### Flutter ###
 # Flutter/Dart/Pub related
 **/doc/api/
-.fvm/
+.fvm/flutter_sdk
 .pub-cache/
 .pub/
 coverage/

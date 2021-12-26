@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oauth2/oauth2.dart';
-import 'package:repo_viewer/auth/infrastructure/credentials_storage/credentials_storage.dart';
-import 'package:repo_viewer/utils/app_constants.dart';
+import 'credentials_storage.dart';
+import '../../../utils/app_constants.dart';
 
 ///
 /// this is the implementation of the credentials storage for the mobile devices
@@ -13,16 +13,19 @@ class SecureCredentialsStorage implements CredentialsStorage {
     final FlutterSecureStorage _storage;
 
     ///
-    /// for saving the credentials in the cache when i save then in the device storage 
+    /// for saving the credentials in the cache when i save them in the device storage 
     ///
     Credentials? _cachedCredentials;
 
-    SecureCredentialsStorage(this._storage);
+    SecureCredentialsStorage(
+        this._storage
+    );
 
     @override
     Future<Credentials?> read() async {
         ///
-        /// if the cached credentials is not null then the user is successfully signed in
+        /// first read from the cache, 
+        /// if the cached credentials is not null then return that cached credentials
         ///
         if (_cachedCredentials != null) {
             return _cachedCredentials;
@@ -31,8 +34,14 @@ class SecureCredentialsStorage implements CredentialsStorage {
         ///
         /// we also need to read the storage cause we won't always have the credentials cached
         ///
-        final json = await _storage.read(key: AppConstants.storageKey);
+        final json = await _storage.read(
+            key: AppConstants.storageKey
+        );
 
+        ///
+        /// in case the app is running for the first time or the user is signed out then sign in again
+        /// the json in that case will be null
+        ///
         if (json == null) {
             return null;
         }
@@ -54,8 +63,12 @@ class SecureCredentialsStorage implements CredentialsStorage {
         ///
         _cachedCredentials = credentials;
 
+        ///
+        /// and save in the secure credential storage
+        ///
         return _storage.write(
-            key: AppConstants.storageKey, value: credentials.toJson()
+            key: AppConstants.storageKey, 
+            value: credentials.toJson()
         );
     }
 
@@ -63,6 +76,8 @@ class SecureCredentialsStorage implements CredentialsStorage {
     Future<void> clear() {
         _cachedCredentials = null;
 
-        return _storage.delete(key: AppConstants.storageKey);
+        return _storage.delete(
+            key: AppConstants.storageKey
+        );
     }
 }

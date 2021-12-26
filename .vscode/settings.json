@@ -1,3 +1,10 @@
 {
-  "files.exclude": {}
+  "files.exclude": {},
+  "cSpell.words": [
+    "dartz",
+    "funion",
+    "nullsafety",
+    "riverpod"
+],
+"dart.flutterSdkPath": "/Users/Abanoub/fvm/versions/2.8.1"
 }

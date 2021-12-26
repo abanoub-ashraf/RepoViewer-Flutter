@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:repo_viewer/utils/app_constants.dart';
+import '../../utils/app_constants.dart';
 
 ///
 /// this is the page that will hold the web view that's gonna load once 
@@ -13,8 +13,8 @@ class AuthorizationPage extends StatefulWidget {
     ///
     final Uri authorizationUrl;
     ///
-    /// this function will give the redirect url we get from the web view from this
-    /// page and give it back to the sign in page to be used inside the body of 
+    /// this function will give us the redirect url we get from the web view with authorization code 
+    /// from this page and give it back to the sign in page to be used inside the body of 
     /// the sign() method of the application layer  
     ///
     final void Function(Uri redirectUrl) onAuthorizationCodeRedirectAttempt;
@@ -22,7 +22,7 @@ class AuthorizationPage extends StatefulWidget {
     const AuthorizationPage({ 
         Key? key,
         required this.authorizationUrl,
-        required this.onAuthorizationCodeRedirectAttempt 
+        required this.onAuthorizationCodeRedirectAttempt,
     }) : super(key: key);
 
     @override
@@ -30,13 +30,13 @@ class AuthorizationPage extends StatefulWidget {
 }
 
 class _AuthorizationPageState extends State<AuthorizationPage> {
-    ///
-    /// to fix not so important issue in the web view with android
-    ///
     @override
     void initState() {
         super.initState();
 
+        ///
+        /// to fix not so important issue in the web view with android
+        ///
         if (Platform.isAndroid) {
             WebView.platform = SurfaceAndroidWebView();
         }

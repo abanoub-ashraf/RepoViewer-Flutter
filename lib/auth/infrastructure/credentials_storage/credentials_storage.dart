@@ -1,6 +1,8 @@
 import 'package:oauth2/oauth2.dart';
 
 ///
+/// - this is a place to store the credentials
+///
 /// - this is an interface cause we gonna have two different implementations 
 ///   for the methods inside of it
 /// 
@@ -8,6 +10,6 @@ import 'package:oauth2/oauth2.dart';
 ///
 abstract class CredentialsStorage {
     Future<Credentials?> read();
-    Future<void> save(Credentials credentials);
+    Future<void> save(Credentials credentials);   
     Future<void> clear();
 }

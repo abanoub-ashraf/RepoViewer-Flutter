@@ -1,30 +1,41 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:repo_viewer/auth/application/auth_notifier.dart';
-import 'package:repo_viewer/auth/shared/providers.dart';
-import 'package:repo_viewer/core/presentation/routes/app_router.gr.dart';
-import 'package:repo_viewer/utils/app_constants.dart';
+
+import '../../auth/application/auth_state.dart';
+import '../../auth/shared/providers.dart';
+import '../../utils/app_constants.dart';
+import 'routes/app_router.gr.dart';
 
 ///
 /// - A provider that asynchronously creates a single value.
-/// 
-/// - FutureProvider can be considered as a combination of Provider and FutureBuilder. 
-///   By using FutureProvider, the UI will be able to read the state of the future synchronously, 
+///
+/// - FutureProvider can be considered as a combination of Provider and FutureBuilder.
+///   By using FutureProvider, the UI will be able to read the state of the future synchronously,
 ///   handle the loading/error states, and rebuild when the future completes.
+/// 
+/// - this provider will run just once to check and set the state of the auth notifier provider
 ///
 final initializationProvider = FutureProvider<Unit>((ref) async {
     ///
     /// - this initialization provider will be used for checking if the user signed in or not
     ///   and we want this provider to only run once that's why we used read() instead of watch()
     /// 
+    /// - if we used watch() instead of read() and if the provider changes then this 
+    ///   initialization provider will run again
+    /// 
+    /// - read() will not cause a provider's state to be recreated when the provider obtained changes
+    /// 
+    /// - watch() obtains the state of a provider and cause the state to be re-evaluated when 
+    ///   that provider emits a new value
+    ///
     /// - .notifier to read the actual notifier of the provider
     ///
     final authNotifier = ref.read(authNotifierProvider.notifier);
-    
+
     ///
     /// checkAndUpdateAuthStatus() needs to run once to set the state
-    /// inside the auth notifier to authenticated or not, that's why we need this 
+    /// inside the auth notifier to authenticated or not, that's why we need this
     /// initialization provider to run once without doing anything with its value
     /// and that happens inside the root provider listener inside the build method
     ///
@@ -49,12 +60,28 @@ class AppWidget extends StatelessWidget {
         return ProviderListener(
             ///
             /// - ProviderListener is used for listening fo the the initializationProvider
-            /// 
+            ///
             /// - the only reason we're listening to the provider above is so it runs
             ///   we don't wanna do anything else with it
+            /// 
+            /// - using this initializationProvider inside a provider listener makes it runs
+            /// 
+            /// - when the initializationProvider runs, it will set the state to 
+            ///   either authenticated or unauthenticated
             ///
             provider: initializationProvider,
-            onChange: (context, value) {},
+            onChange: (context, initializationState) {
+                ///
+                /// - we won't do anything with the initializationProvider
+                /// 
+                /// - we only listening to it so it runs and do the check to return either
+                ///   authenticated state or unauthenticated state
+                ///
+            },
+            ///
+            /// this is for using the state of the auth notifier that was set by 
+            /// the initializationProvider
+            ///
             child: ProviderListener<AuthState>(
                 ///
                 /// this provider listener will listen to the auth notifier provider
@@ -63,31 +90,74 @@ class AppWidget extends StatelessWidget {
                 ///
                 provider: authNotifierProvider,
                 ///
-                /// the initialization provider did set this authState and now 
-                /// we wanna do something with it after it is set
+                /// - the initialization provider did set this authState and now
+                ///   we wanna do something with it after it is set
+                ///
+                /// - if we're authenticated, go to the starred repos page, if we not then go
+                ///   to the sign in page
                 /// 
-                /// if we're authenticated
+                /// - onChange() is a function called with the new value of [provider] when it changes
                 ///
                 onChange: (context, authState) {
                     authState.maybeMap(
+                        ///
+                        /// if the state is authenticated, go to the starred repos page
+                        ///
                         authenticated: (_) {
                             appRouter.pushAndPopUntil(
-                                const StarredReposRoute(), 
+                                const StarredReposRoute(),
+                                ///
+                                /// this ensures that all the routes are popped and only the starred
+                                /// repos route is pushed so it's the only one present in the navigation 
+                                /// stack so the user can't navigate back to the splash page
+                                ///
                                 predicate: (route) => false
                             );
                         },
+                        ///
+                        /// if the state is unauthenticated, go to the sign in page
+                        ///
                         unauthenticated: (_) {
                             appRouter.pushAndPopUntil(
-                                const SignInRoute(), 
+                                const SignInRoute(),
+                                ///
+                                /// to insure that all the routes are popped so the user can't go back
+                                /// to any previous page after the user sign out 
+                                ///
                                 predicate: (route) => false
                             );
                         },
-                        orElse: () {},
+                        orElse: () {
+                            ///
+                            /// ignore the other states
+                            /// 
+                        },
                     );
                 },
+                ///
+                /// - router() creates a [MaterialApp] that uses the [Router] instead of a [Navigator]
+                /// 
+                /// - .router() means we using Navigator 2.0
+                ///
                 child: MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    ///
+                    /// - navigator 2.0 replace the home property with routerDelegate and 
+                    ///   routeInformationParser properties
+                    /// 
+                    /// - it uses the auto route and the auto route generator packages to 
+                    ///   simplify navigation in the app
+                    ///
                     title: AppConstants.appName,
+                    ///
+                    /// this delegate function is coming from the auto generated 
+                    /// app router file
+                    ///
                     routerDelegate: appRouter.delegate(),
+                    ///
+                    /// this defaultRouteParser function is coming from 
+                    /// the auto generated app router file
+                    ///
                     routeInformationParser: appRouter.defaultRouteParser(),
                 ),
             ),

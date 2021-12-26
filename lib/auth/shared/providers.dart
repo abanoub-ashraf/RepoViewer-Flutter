@@ -1,29 +1,41 @@
 import 'package:dio/dio.dart';
-import 'package:repo_viewer/auth/application/auth_notifier.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:repo_viewer/auth/infrastructure/credentials_storage/credentials_storage.dart';
-import 'package:repo_viewer/auth/infrastructure/credentials_storage/secure_credentials_storage.dart';
-import 'package:repo_viewer/auth/infrastructure/github_authenticator.dart';
+import 'package:riverpod/riverpod.dart';
 
-final flutterSecureStorageProvider  = Provider((ref) => const FlutterSecureStorage());
+import '../application/auth_notifier.dart';
+import '../application/auth_state.dart';
+import '../infrastructure/credentials_storage/credentials_storage.dart';
+import '../infrastructure/credentials_storage/secure_credentials_storage.dart';
+import '../infrastructure/github_authenticator.dart';
 
-final dioProvider                   = Provider((ref) => Dio());
+///
+/// - we will use riverpod to provided the dependencies needed around the app for the class
+/// 
+/// - riverpod will solve the dependency injection between the class we used in this auth module
+///
 
-final credentialsStorageProvider    = Provider<CredentialsStorage>(
+final flutterSecureStorageProvider = Provider<FlutterSecureStorage>(
+    (ref) => const FlutterSecureStorage()
+);
+
+final credentialsStorageProvider = Provider<CredentialsStorage>(
     (ref) => SecureCredentialsStorage(
         ref.watch(flutterSecureStorageProvider)
     )
 );
 
-final githubAuthenticatorProvider   = Provider(
+final dioProvider = Provider<Dio>(
+    (ref) => Dio()
+);
+
+final githubAuthenticatorProvider = Provider<GithubAuthenticator>(
     (ref) => GithubAuthenticator(
         ref.watch(credentialsStorageProvider), 
         ref.watch(dioProvider)
     )
 );
 
-final authNotifierProvider          = StateNotifierProvider<AuthNotifier, AuthState>(
+final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>(
     (ref) => AuthNotifier(
         ref.watch(githubAuthenticatorProvider)
     )

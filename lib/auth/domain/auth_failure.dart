@@ -6,6 +6,8 @@ part 'auth_failure.freezed.dart';
 /// - union class using freezed package
 /// 
 /// - this will handle the auth failure when it happens
+/// 
+/// - this comes from the infrastructure through the domain going to the application
 ///
 @freezed
 class AuthFailure with _$AuthFailure {

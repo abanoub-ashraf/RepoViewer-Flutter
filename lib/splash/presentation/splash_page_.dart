@@ -22,7 +22,7 @@ class SplashPage extends StatelessWidget {
                             size: 150
                         ),
                         SizedBox(height: 16),
-                        LinearProgressIndicator()
+                        LinearProgressIndicator(),
                     ],
                 ),
             ),
