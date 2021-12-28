@@ -77,12 +77,21 @@ import 'core/presentation/app_widget.dart';
 /// 
 ///         - entities contain validated value objects (these hold logic)
 /// 
-///         - entities are pure classes
+///         - entities are clean dart data classes using freezed package
 /// 
 ///         - the entities of this domain layer and the failures that will come from the infrastructure
 ///           one will be put into an either type when they travel between the infrastructure's repository
 ///           and the state of the application layer then the application layer will put the entity
 ///           and the failure individually into a state and give them to the presentation
+/// 
+///         - they are data classes which represent the data in a way which our app can easily
+///           work with
+/// 
+///         - they will have only data and possibly some business logic methods or properties on them
+/// 
+///         - they don't care about transforming data from json into dart classes, that will be 
+///           the responsibility of a data transfer object (DTO) which is going to care about
+///           json and how to convert them into dart data
 /// 
 ///     4- Infrastructure Layer:
 ///     ==========================
@@ -127,6 +136,9 @@ import 'core/presentation/app_widget.dart';
 /// 
 ///         - failures are gonna be freezed unions, either type is union as well so they can 
 ///           work together just fine
+/// 
+///         - the responsibility of a data transfer object (DTO) is to care about json and how to 
+///           convert them into dart data
 ///
 void main() => runApp(
     ///

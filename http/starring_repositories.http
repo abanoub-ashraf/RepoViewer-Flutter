@@ -1,0 +1,23 @@
+@baseUrl = https://api.github.com
+@token = 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
+@acceptHeader = application/vnd.github.v3.html+json
+
+### star a repository ###
+
+PUT {{baseUrl}}/user/starred/ResoDev/cli
+Authorization: bearer {{token}}
+Accept: {{acceptHeader}}
+Content-Length: 0
+
+### check if a repository is starred by the authenticated user ###
+
+GET {{baseUrl}}/user/starred/ResoDev/cli
+Authorization: bearer {{token}}
+Accept: {{acceptHeader}}
+
+### unstar a repository ###
+
+DELETE {{baseUrl}}/user/starred/ResoDev/cli
+Authorization: bearer {{token}}
+Accept: {{acceptHeader}}
+Content-Length: 0
