@@ -147,6 +147,10 @@ import 'core/presentation/app_widget.dart';
 ///         - the dto will take the raw json data from the api and convert it into dart class,
 ///           that class is sorta messy and then it will be converted into entity by the repository
 ///           which will have the conversion method
+/// 
+///         - inside the dto class, there's a conversion from entity to dto and vise versa
+///           and that conversion is not the only one that happens between dto and entity
+///           there's another conversion between these two will happen inside the repository
 ///
 void main() => runApp(
     ///

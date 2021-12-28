@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:repo_viewer/github/core/domain/entities/repo_owner/repo_owner_entity.dart';
 
 ///
 /// - this is for the freezed package
@@ -70,4 +71,27 @@ class RepoOwnerDTO with _$RepoOwnerDTO {
     ///     4- then run the build runner or rerun it if it was already running
     ///
     factory RepoOwnerDTO.fromJson(Map<String, dynamic> json) => _$RepoOwnerDTOFromJson(json);
+
+    ///
+    /// - convert from entity [domain layer] to dto [infrastructure layer]
+    /// 
+    /// - the conversion from dto into entity will happen inside the dto class
+    ///   like what we're doing right now in this factory constructor
+    ///
+    factory RepoOwnerDTO.fromDomain(RepoOwnerEntity repoOwnerEntity) {
+        return RepoOwnerDTO(
+            name: repoOwnerEntity.name, 
+            avatarUrl: repoOwnerEntity.avatarUrl
+        );
+    }
+
+    ///
+    /// convert from dto [infrastructure layer] to entity [domain layer]
+    ///
+    RepoOwnerEntity toDomain() {
+        return RepoOwnerEntity(
+            name: name, 
+            avatarUrl: avatarUrl
+        );
+    }
 }
