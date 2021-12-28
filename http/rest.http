@@ -1,9 +1,0 @@
-@baseUrl = https://api.github.com
-@token = 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
-@acceptHeader = application/vnd.github.v3.html+json
-
-### get repository README ###
-
-GET {{baseUrl}}/repos/flutter/flutter/readme
-Authorization: bearer {{token}}
-Accept: {{acceptHeader}}

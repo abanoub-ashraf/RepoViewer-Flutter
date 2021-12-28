@@ -138,7 +138,15 @@ import 'core/presentation/app_widget.dart';
 ///           work together just fine
 /// 
 ///         - the responsibility of a data transfer object (DTO) is to care about json and how to 
-///           convert them into dart data
+///           convert them into dart data then that data will be sent to the repository to be 
+///           converted in there into entity/failure
+/// 
+///         - the repository will convert the dto into entity, it takes a dto and output
+///           entity/failure
+/// 
+///         - the dto will take the raw json data from the api and convert it into dart class,
+///           that class is sorta messy and then it will be converted into entity by the repository
+///           which will have the conversion method
 ///
 void main() => runApp(
     ///
