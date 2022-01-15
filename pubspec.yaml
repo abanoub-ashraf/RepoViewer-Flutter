@@ -1,8 +1,9 @@
 name: repo_viewer
 
-description: A Flutter App for viewing Github Repositories, search for them, and also star them.
+description: A Flutter App for viewing Github Repositories, search for them, and
+  also star them.
 
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -10,49 +11,34 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  auto_route: ^3.2.0
+  dartz: ^0.10.0-nullsafety.1
+  dio: ^4.0.0
+  flash: ^2.0.3
   flutter:
     sdk: flutter
-
-  # debugging
-  logger: ^1.1.0
-  print_color: ^3.0.3
-  pretty_json: ^2.0.0
-
-  # authentication
-  oauth2: ^2.0.0
-  flutter_secure_storage: ^4.2.1
-  
-  # state management
   flutter_hooks: ^0.18.0
-  hooks_riverpod: ^0.14.0+5
-
-  # networking
-  dio: ^4.0.0
-
-  # functional programming
-  dartz: ^0.10.0-nullsafety.1
-
-  # ui
-  webview_flutter: ^2.1.1
-  flash: ^2.0.3
-  material_design_icons_flutter: 5.0.5955-rc.1
-
-  # code generation
+  flutter_secure_storage: ^4.2.1
   freezed_annotation: ^0.14.1
-  auto_route: ^3.2.0
+  hooks_riverpod: ^0.14.0+5
   json_annotation: ^4.4.0
+  logger: ^1.1.0
+  material_design_icons_flutter: 5.0.5955-rc.1
+  oauth2: ^2.0.0
+  path: ^1.8.0
+  path_provider: ^2.0.8
+  pretty_json: ^2.0.0
+  print_color: ^3.0.3
+  sembast: ^3.1.1+1
+  webview_flutter: ^2.1.1
 
 dev_dependencies:
+  auto_route_generator: ^3.2.0
+  build_runner: ^2.1.4
   flutter_test:
     sdk: flutter
-
-  # code generation
-  build_runner: ^2.1.4
   freezed: ^0.14.1+3
-  auto_route_generator: ^3.2.0
   json_serializable: ^6.1.3
-
-  # linting
   lint: ^1.7.2
 
 flutter:

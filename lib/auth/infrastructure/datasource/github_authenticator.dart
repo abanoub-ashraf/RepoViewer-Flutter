@@ -2,14 +2,14 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:oauth2/oauth2.dart';
-import '../../utils/debug_access_token.dart';
+import '../../../utils/debug_access_token.dart';
 
-import '../../core/infrastructure/dio_extensions.dart';
-import '../../core/shared/encoders.dart';
-import '../../utils/app_constants.dart';
-import '../../utils/config.dart';
-import '../domain/auth_failure.dart';
-import 'credentials_storage/credentials_storage.dart';
+import '../../../core/infrastructure/networking/dio_extensions.dart';
+import '../../../core/shared/encoders.dart';
+import '../../../utils/app_constants.dart';
+import '../../../utils/config.dart';
+import '../../domain/auth_failure.dart';
+import '../credentials_storage/credentials_storage.dart';
 import 'github_authenticator_client.dart';
 
 ///
@@ -270,39 +270,6 @@ class GithubAuthenticator {
     ///
     Future<Either<AuthFailure, Unit>> signOut() async {
         ///
-        /// get the current valid token of the current logged in user from the storage that 
-        /// we wanna revoke for signing that user out
-        ///
-        final accessToken = await _credentialsStorage
-            .read()
-            .then((credentials) => credentials?.accessToken);
-
-        ///
-        /// - this is the client id and the client secret in a form of base64 to be passed
-        ///   to the delete request down there in its header
-        /// 
-        /// - the client id and the client secret are strings and the base64.encode()
-        ///   takes a list of int so we need to change their string format
-        ///   into list of int and that's what utf8.encode() method does
-        /// 
-        /// - this is exactly the same as he line beneath it
-        ///
-        final usernameAndPassword = stringToBase64.encode(
-            '${Config.clientID}:${Config.clientSecret}'
-        );
-
-        ///
-        /// - the line above this one is the exact same thing as this one
-        /// 
-        /// - stringToBase64 is mix of the 2 encode() methods we used to make this base64
-        ///
-        // final usernameAndPassword = base64.encode(
-        //     utf8.encode(
-        //         '${Config.clientID}:${Config.clientSecret}'
-        //     )
-        // );
-
-        ///
         /// - we gonna handle the sign out when the user is offline through
         ///   the socket exception that happens when there's no internet connection
         /// 
@@ -310,6 +277,39 @@ class GithubAuthenticator {
         ///   clearing the token from the credentials storage is independent
         ///
         try {
+            ///
+            /// get the current valid token of the current logged in user from the storage that 
+            /// we wanna revoke for signing that user out
+            ///
+            final accessToken = await _credentialsStorage
+                .read()
+                .then((credentials) => credentials?.accessToken);
+
+            ///
+            /// - this is the client id and the client secret in a form of base64 to be passed
+            ///   to the delete request down there in its header
+            /// 
+            /// - the client id and the client secret are strings and the base64.encode()
+            ///   takes a list of int so we need to change their string format
+            ///   into list of int and that's what utf8.encode() method does
+            /// 
+            /// - this is exactly the same as he line beneath it
+            ///
+            final usernameAndPassword = stringToBase64.encode(
+                '${Config.clientID}:${Config.clientSecret}'
+            );
+
+            ///
+            /// - the line above this one is the exact same thing as this one
+            /// 
+            /// - stringToBase64 is mix of the 2 encode() methods we used to make this base64
+            ///
+            // final usernameAndPassword = base64.encode(
+            //     utf8.encode(
+            //         '${Config.clientID}:${Config.clientSecret}'
+            //     )
+            // );
+
             ///
             /// if the user is offline the sign out will fail to delete the token
             /// and that will be caught in the socket exception, 
@@ -325,7 +325,7 @@ class GithubAuthenticator {
                 /// - it also takes the client id and the client secret in the header
                 ///   as an authorization header in base64 format
                 ///
-                _dio.deleteUri(
+                await _dio.deleteUri(
                     AppConstants.revocationEndpoint, 
                     data: {
                         'access_token': accessToken
@@ -350,13 +350,20 @@ class GithubAuthenticator {
                 }
             }
 
-            await _credentialsStorage.clear();
-            
-            return right(unit);
+            return clearCredentialsStorage();
         } on PlatformException {
             return left(
                 const AuthFailure.storage()
             );
+        }
+    }
+
+    Future<Either<AuthFailure, Unit>> clearCredentialsStorage() async {
+        try {
+            await _credentialsStorage.clear();
+            return right(unit);
+        } on PlatformException {
+            return left(const AuthFailure.storage());
         }
     }
 

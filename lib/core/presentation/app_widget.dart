@@ -1,48 +1,11 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../auth/application/auth_state.dart';
 import '../../auth/shared/providers.dart';
 import '../../utils/app_constants.dart';
+import '../shared/providers.dart';
 import 'routes/app_router.gr.dart';
-
-///
-/// - A provider that asynchronously creates a single value.
-///
-/// - FutureProvider can be considered as a combination of Provider and FutureBuilder.
-///   By using FutureProvider, the UI will be able to read the state of the future synchronously,
-///   handle the loading/error states, and rebuild when the future completes.
-/// 
-/// - this provider will run just once to check and set the state of the auth notifier provider
-///
-final initializationProvider = FutureProvider<Unit>((ref) async {
-    ///
-    /// - this initialization provider will be used for checking if the user signed in or not
-    ///   and we want this provider to only run once that's why we used read() instead of watch()
-    /// 
-    /// - if we used watch() instead of read() and if the provider changes then this 
-    ///   initialization provider will run again
-    /// 
-    /// - read() will not cause a provider's state to be recreated when the provider obtained changes
-    /// 
-    /// - watch() obtains the state of a provider and cause the state to be re-evaluated when 
-    ///   that provider emits a new value
-    ///
-    /// - .notifier to read the actual notifier of the provider
-    ///
-    final authNotifier = ref.read(authNotifierProvider.notifier);
-
-    ///
-    /// checkAndUpdateAuthStatus() needs to run once to set the state
-    /// inside the auth notifier to authenticated or not, that's why we need this
-    /// initialization provider to run once without doing anything with its value
-    /// and that happens inside the root provider listener inside the build method
-    ///
-    await authNotifier.checkAndUpdateAuthStatus();
-
-    return unit;
-});
 
 class AppWidget extends StatelessWidget {
     ///

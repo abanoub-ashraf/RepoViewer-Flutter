@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:repo_viewer/github/core/domain/entities/github_repo/github_repo_entity.dart';
-import 'package:repo_viewer/github/core/domain/entities/repo_owner/repo_owner_entity.dart';
 
 import '../repo_owner/repo_owner_dto.dart';
 
@@ -19,6 +18,10 @@ String _descriptionFromJson(Object? json) {
 class GithubRepoDTO with _$GithubRepoDTO {
     const GithubRepoDTO._();
 
+    ///
+    /// this constructor takes the fields that will be in the json response
+    /// and use JsonKey if the names was different
+    ///
     const factory GithubRepoDTO({
         required RepoOwnerDTO owner,
         required String name,
@@ -32,7 +35,8 @@ class GithubRepoDTO with _$GithubRepoDTO {
         @JsonKey(name: 'stargazers_count') required int stargazersCount,
     }) = _GithubRepoDTO;
 
-    factory GithubRepoDTO.fromJson(Map<String, dynamic> json) => _$GithubRepoDTOFromJson(json);
+    factory GithubRepoDTO.fromJson(Map<String, dynamic> json) => 
+        _$GithubRepoDTOFromJson(json);
 
     factory GithubRepoDTO.fromDomain(GithubRepoEntity githubRepoEntity) {
         return GithubRepoDTO(
