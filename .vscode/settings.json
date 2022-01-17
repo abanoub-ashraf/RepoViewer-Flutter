@@ -13,69 +13,8 @@
         "Reso",
         "riverpod",
         "sembast",
+        "starredRepos",
         "upsert"
     ],
     "dart.flutterSdkPath": "/Users/Abanoub/fvm/versions/2.8.1",
-    "editor.tokenColorCustomizations": {
-        "[Class Dark Purple]": {
-            "comments": "#414245",
-            "strings": "#AC4041"
-        },
-        "[Aqua Material]": {
-            "comments": "#414245",
-            "strings": "#AC4041"
-        },
-        "[50 Shades of Purple]": {
-            "comments": "#414245",
-            "strings": "#AC4041"
-        },
-        "[Horizon Extended]": {
-            "comments": "#414245",
-            "strings": "#AC4041"
-        },
-        "[Native macOS - Dark Theme, Dark Editor]": {
-            "comments": "#6055699c"
-        },
-        "[One Monokai]": {
-            "comments": "#6b7d8f50"
-        },
-        "[GitHub Dark]": {},
-        "[One Dark Pro ++]": {
-            "comments": "#414245",
-            "strings": "#AC4041"
-        },
-        "[Dracula normal contrast]": {},
-        "[Dracula Clean]": {
-            "strings": "#E8C48D"
-        },
-        "[Dracula Redefined 🧛🏻‍♂️]": {
-            "strings": "#E8C48D",
-            "functions": "#F55E77"
-        },
-        "[Dracula high contrast]": {
-            "strings": "#E8C48D",
-            "functions": "#F55E77"
-        },
-        "[MacOS Modern Dark - Xcode Default]": {
-            "functions": "#B281EB",
-            "keywords": "#EE75AA",
-            "strings": "#F37D6D",
-            "variables": "#EE75AA",
-            "comments": "#576275a8"
-        },
-        "[Plastic]": {
-            "keywords": "#DC6D74",
-            "variables": "#BEC3CF",
-            "strings": "#59E69D",
-            "comments": "#576275a8"
-        },
-        "[Xcode Syntax Default Dark]": {},
-        "[xViewDark]": {},
-        "[Maisum Xcode Dark]": {},
-        "[Gamut]": {
-            "comments": "#6b7d8f50"
-        },
-        "comments": "",
-        "textMateRules": []
-    }
 }
