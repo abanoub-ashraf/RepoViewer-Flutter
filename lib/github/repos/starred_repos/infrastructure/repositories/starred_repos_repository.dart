@@ -56,7 +56,14 @@ class StarredReposRepository {
                 ///   of the isNextPageAvailable variable is true
                 ///
                 await remotePageItems.when(
-                    noConnection: (maxPage) async {
+                    ///
+                    /// - the maxPage is determined by the remote service in all the other cases
+                    ///   but in the no connection one we want it to be determined by the local service
+                    /// 
+                    /// - in the no connection we can't get the max page from the api cause 
+                    ///   we have no internet connection
+                    ///
+                    noConnection: () async {
                         ///
                         /// - in this no connection case we got the max page from the remote service
                         /// 
@@ -67,7 +74,7 @@ class StarredReposRepository {
                             await _localService
                                 .getPage(page)
                                 .then((githubRepoDtos) => githubRepoDtos.toDomain()), 
-                            isNextPageAvailable: page < maxPage,
+                            isNextPageAvailable: page < await _localService.getLocalPageCount(),
                         );
                     },
                     notModified: (maxPage) async {

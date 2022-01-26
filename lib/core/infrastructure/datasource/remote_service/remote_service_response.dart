@@ -38,9 +38,7 @@ class RemoteServiceResponse<T> with _$RemoteServiceResponse<T> {
     ///
     /// in case the user has no connection
     ///
-    const factory RemoteServiceResponse.noConnection({ 
-        required int maxPage
-    }) = _NoConnection<T>;
+    const factory RemoteServiceResponse.noConnection() = _NoConnection<T>;
     
     ///
     /// in case the data we got from the server is the same as the cached one

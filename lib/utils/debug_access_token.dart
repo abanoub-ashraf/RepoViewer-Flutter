@@ -7,7 +7,7 @@ void printAccessToken(String token) {
 }
 
 void printTokenIsNotRevoked() {
-    Print.red('===============================================');
-    Print.red('Token is not Revoked!');
-    Print.red('===============================================');
+    Print.magenta('===============================================');
+    Print.magenta('Token is not Revoked!');
+    Print.magenta('===============================================');
 }

@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:repo_viewer/github/core/domain/entities/repo_owner/repo_owner_entity.dart';
+
+import '../../../domain/entities/repo_owner/repo_owner_entity.dart';
 
 ///
 /// - this is for the freezed package
@@ -7,7 +8,6 @@ import 'package:repo_viewer/github/core/domain/entities/repo_owner/repo_owner_en
 /// - the snippet for it is --> ptf
 ///
 part 'repo_owner_dto.freezed.dart';
-
 ///
 /// - this is for the json serializable package
 /// 

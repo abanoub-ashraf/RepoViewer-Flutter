@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../infrastructure/datasource/github_authenticator.dart';
 
+import '../infrastructure/datasource/github_authenticator.dart';
 import 'auth_state.dart';
 
 class AuthNotifier extends StateNotifier<AuthState> {

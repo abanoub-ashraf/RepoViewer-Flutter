@@ -13,4 +13,10 @@ class RepoOwnerEntity with _$RepoOwnerEntity {
         required String name,
         required String avatarUrl,
     }) = _RepoOwnerEntity;
+
+    ///
+    /// this extra query param is available by the api and enables us to get
+    /// images from the api in a small size cause the big size is not needed
+    ///
+    String get avatarUrlSmall => '$avatarUrl&s=64';
 }

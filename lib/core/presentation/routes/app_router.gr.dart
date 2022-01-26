@@ -7,13 +7,15 @@
 // **************************************************************************
 // AutoRouteGenerator
 // **************************************************************************
+//
+// ignore_for_file: type=lint
 
 import 'package:auto_route/auto_route.dart' as _i5;
 import 'package:flutter/material.dart' as _i6;
 
 import '../../../auth/presentation/authorization_page.dart' as _i3;
 import '../../../auth/presentation/sign_in_page.dart' as _i2;
-import '../../../github/repos/starred_repos/presentation/starred_repos_page.dart'
+import '../../../github/repos/starred_repos/presentation/pages/starred_repos_page.dart'
     as _i4;
 import '../../../splash/presentation/splash_page.dart' as _i1;
 

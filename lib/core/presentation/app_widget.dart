@@ -122,6 +122,14 @@ class AppWidget extends StatelessWidget {
                     /// the auto generated app router file
                     ///
                     routeInformationParser: appRouter.defaultRouteParser(),
+                    ///
+                    /// the theme of the app
+                    ///
+                    theme: ThemeData(
+                        colorScheme: ColorScheme.fromSwatch(
+                            primarySwatch: Colors.blueGrey
+                        ),
+                    ),
                 ),
             ),
         );

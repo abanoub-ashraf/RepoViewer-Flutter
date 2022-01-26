@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/src/provider.dart';
-
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import '../shared/providers.dart';
+
 import '../../core/presentation/routes/app_router.gr.dart';
+import '../shared/providers.dart';
 
 ///
 /// this [presentation layer] will use the functions of the [application layer]

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:repo_viewer/github/core/infrastructure/config/pagination_config.dart';
+import '../../../../../core/infrastructure/config/pagination_config.dart';
 
 import '../../../../../../core/infrastructure/datasource/remote_service/remote_service_response.dart';
 import '../../../../../../core/infrastructure/networking/dio_extensions.dart';
@@ -123,9 +123,11 @@ class StarredReposRemoteService {
             }
         } on DioError catch (error) {
             if (error.isNoConnectionError) {
-                return RemoteServiceResponse.noConnection(
-                    maxPage: previousHeaders?.link?.maxPage ?? 0
-                );
+                ///
+                /// this no connection remote response will come from the error
+                /// that happens here in this remote data source
+                ///
+                return const RemoteServiceResponse.noConnection();
             } else if (error.response!= null) {
                 throw RestApiException(
                     error.response?.statusCode

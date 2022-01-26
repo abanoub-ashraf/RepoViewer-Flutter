@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:repo_viewer/github/core/domain/entities/github_repo/github_repo_entity.dart';
 
+import '../../../domain/entities/github_repo/github_repo_entity.dart';
 import '../repo_owner/repo_owner_dto.dart';
 
 part 'github_repo_dto.freezed.dart';

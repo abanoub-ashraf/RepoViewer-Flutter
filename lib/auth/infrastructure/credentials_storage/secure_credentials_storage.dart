@@ -1,7 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oauth2/oauth2.dart';
-import 'credentials_storage.dart';
+
 import '../../../utils/app_constants.dart';
+import 'credentials_storage.dart';
 
 ///
 /// this is the implementation of the credentials storage for the mobile devices

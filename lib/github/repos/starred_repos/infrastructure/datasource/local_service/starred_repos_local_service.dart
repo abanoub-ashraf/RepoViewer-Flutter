@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
-import 'package:repo_viewer/github/core/infrastructure/config/pagination_config.dart';
 import 'package:sembast/sembast.dart';
 
 import '../../../../../../core/infrastructure/datasource/local_service/sembast_database.dart';
+import '../../../../../core/infrastructure/config/pagination_config.dart';
 import '../../../../../core/infrastructure/dtos/github_repo/github_repo_dto.dart';
 
 ///
@@ -90,5 +90,21 @@ class StarredReposLocalService {
         return records
             .map((record) => GithubRepoDTO.fromJson(record.value))
             .toList();
+    }
+
+    ///
+    /// - get the number of pages in the local storage
+    /// 
+    /// - every page has many repos we just need the count of those pages 
+    ///
+    Future<int> getLocalPageCount() async {
+        final reposCount = await _store.count(_sembastDatabase.instance);
+        ///
+        /// - the number of all the records / the number of the pages that holds them 
+        ///   to get how many pages we have
+        /// 
+        /// - .ceil() in case we got a number like 0.4 or 0.7 we want only full number
+        ///
+        return (reposCount / PaginationConfig.itemsPerPage).ceil();
     }
 }

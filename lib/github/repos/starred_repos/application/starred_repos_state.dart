@@ -1,14 +1,15 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:repo_viewer/github/core/domain/failures/github_failure.dart';
 
 import '../../../../core/domain/entities/fresh_data_entity.dart';
 import '../../../core/domain/entities/github_repo/github_repo_entity.dart';
+import '../../../core/domain/failures/github_failure.dart';
 
 part 'starred_repos_state.freezed.dart';
 
 @freezed
 class StarredReposState with _$StarredReposState {
     const StarredReposState._();
+    
     const factory StarredReposState.initial(
         ///
         /// we don't need this here but it's good to have the starredRepos felid

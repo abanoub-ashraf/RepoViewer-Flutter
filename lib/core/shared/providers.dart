@@ -56,7 +56,15 @@ final initializationProvider = FutureProvider<Unit>(
             ///
             headers: {
                 'Accept': 'application/vnd.github.v3.html+json'
-            }
+            },
+            ///
+            /// if we got 304 status code from the starred repos remote service
+            /// then the data we got is the same as the one we have locally but 
+            /// Dio sees that as an error so we need to handle that here by make 
+            /// this validateStatus() returns true when we get the 304 status code   
+            ///
+            validateStatus: (statusCode) => 
+                statusCode != null && statusCode >= 200 && statusCode < 400,
         )..interceptors.add(
             ///
             /// - this interceptor adds the access token to the header of all the web requests

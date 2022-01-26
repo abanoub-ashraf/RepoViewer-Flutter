@@ -31,6 +31,8 @@ dependencies:
   print_color: ^3.0.3
   sembast: ^3.1.1+1
   webview_flutter: ^2.1.1
+  cached_network_image: ^3.2.0
+  shimmer: ^2.0.0
 
 dev_dependencies:
   auto_route_generator: ^3.2.0

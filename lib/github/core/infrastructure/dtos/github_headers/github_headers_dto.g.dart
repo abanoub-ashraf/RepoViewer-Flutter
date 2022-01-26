@@ -17,5 +17,5 @@ _$_GithubHeadersDTO _$$_GithubHeadersDTOFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$_GithubHeadersDTOToJson(_$_GithubHeadersDTO instance) =>
     <String, dynamic>{
       'etag': instance.etag,
-      'link': instance.link,
+      'link': instance.link?.toJson(),
     };

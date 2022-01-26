@@ -1,0 +1,11 @@
+#
+# this is coming from this link https://pub.dev/packages/json_serializable
+# toJson() doesn't get called on nested objects so i need to set this up for that
+# make this build.yaml file in the root directory of the app
+#
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          explicit_to_json: true

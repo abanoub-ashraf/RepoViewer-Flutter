@@ -23,8 +23,6 @@ class OAuth2Interceptor extends Interceptor {
     ///
     @override
     Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-        super.onRequest(options, handler);
-
         ///
         /// get the credentials of the signed in user
         ///
@@ -62,8 +60,6 @@ class OAuth2Interceptor extends Interceptor {
     ///
     @override
     Future<void> onError(DioError err, ErrorInterceptorHandler handler) async {
-        super.onError(err, handler);
-
         ///
         /// if this is not null then the error is coming from the response
         /// not that it's a socket exception

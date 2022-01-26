@@ -8,7 +8,7 @@ import 'starred_repos_state.dart';
 ///
 /// here we will keep track of the page that we will get next
 ///
-class StarredReposNotifier extends StateNotifier<StarredReposState>{
+class StarredReposNotifier extends StateNotifier<StarredReposState> {
     final StarredReposRepository _starredReposRepository;
 
     ///
@@ -77,9 +77,6 @@ class StarredReposNotifier extends StateNotifier<StarredReposState>{
                 /// increase the page number only when we get the success data
                 ///
                 _page++;
-                
-                /// TODO: delete this later
-                print('the right side of the failureOrReposEntity in the starred repos notifier is ${r.isFresh}');
 
                 return StarredReposState.loadSuccess(
                     ///

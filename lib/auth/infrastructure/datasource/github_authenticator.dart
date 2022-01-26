@@ -2,12 +2,12 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:oauth2/oauth2.dart';
-import '../../../utils/debug_access_token.dart';
 
 import '../../../core/infrastructure/networking/dio_extensions.dart';
 import '../../../core/shared/encoders.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/config.dart';
+import '../../../utils/debug_access_token.dart';
 import '../../domain/auth_failure.dart';
 import '../credentials_storage/credentials_storage.dart';
 import 'github_authenticator_client.dart';
